@@ -17,24 +17,29 @@ document.addEventListener('DOMContentLoaded', () => {
         color: 'white',
         padding: '10px 20px',
         fontSize: '18px',
+        fontWeight: 'bold', // Adicionado para destacar
         borderRadius: '5px',
         zIndex: 9999,
         display: 'none'
     });
     document.body.appendChild(countdownEl);
 
-    const eyeMonitor = new EyeMonitor();
-    let countdownInterval = null;
+    // --- MUDANÇA AQUI: Instancia DrowsinessDetector ---
+    const drowsinessDetector = new DrowsinessDetector();
+    // --- FIM DA MUDANÇA ---
 
     async function loadModels() {
         try {
-            const modelUrl = 'https://justadudewhohacks.github.io/face-api.js/models';
+            const modelUrl = '/models'; // Caminho para seus modelos locais
             await faceapi.nets.tinyFaceDetector.loadFromUri(modelUrl);
             await faceapi.nets.faceLandmark68Net.loadFromUri(modelUrl);
+            // Se você quiser detecção de expressão facial (para bocejos mais avançados)
+            // await faceapi.nets.faceExpressionNet.loadFromUri(modelUrl);
             isModelLoaded = true;
-            console.log('Modelos carregados com sucesso!');
+            console.log('Modelos de detecção de sonolência carregados com sucesso de:', modelUrl);
         } catch (error) {
-            console.error('Erro ao carregar modelos:', error);
+            console.error('Erro ao carregar modelos para detecção de sonolência:', error);
+            alert('Não foi possível carregar os modelos. Verifique o console e o caminho dos modelos.');
         }
     }
 
@@ -54,27 +59,33 @@ document.addEventListener('DOMContentLoaded', () => {
                         video,
                         new faceapi.TinyFaceDetectorOptions()
                     ).withFaceLandmarks();
+                    // .withFaceExpressions(); // Adicione se estiver usando faceExpressionNet
 
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
                     const resizedDetections = faceapi.resizeResults(detections, displaySize);
                     faceapi.draw.drawDetections(canvas, resizedDetections);
                     faceapi.draw.drawFaceLandmarks(canvas, resizedDetections);
+                    // faceapi.draw.drawFaceExpressions(canvas, resizedDetections); // Desenha expressões se usar o modelo
 
                     if (resizedDetections.length > 0) {
                         const face = resizedDetections[0];
-                        eyeMonitor.update(face);
+                        // --- MUDANÇA AQUI: Chama o método update da nova classe ---
+                        drowsinessDetector.update(face);
 
-                        if (eyeMonitor.eyesClosedStart && !eyeMonitor.isAlarmOn) {
-                            const timeLeft = Math.ceil((eyeMonitor.duration - (Date.now() - eyeMonitor.eyesClosedStart)) / 1000);
-                            countdownEl.textContent = `Alarme em ${timeLeft}s`;
+                        // --- MUDANÇA AQUI: Ajusta as referências para a nova classe ---
+                        if (drowsinessDetector.eyesClosedStart && !drowsinessDetector.isAlarmOn) {
+                            const timeLeft = Math.ceil((drowsinessDetector.eyeDuration - (Date.now() - drowsinessDetector.eyesClosedStart)) / 1000);
+                            countdownEl.textContent = `Alarme em ${timeLeft}s (Olhos)`;
                             countdownEl.style.display = 'block';
                         } else {
                             countdownEl.style.display = 'none';
                         }
+                        // --- FIM DA MUDANÇA ---
 
-                        console.log('Rosto detectado!');
                     } else {
-                        eyeMonitor.update(null);
+                        // --- MUDANÇA AQUI: Chama o método update da nova classe ---
+                        drowsinessDetector.update(null);
+                        // --- FIM DA MUDANÇA ---
                         countdownEl.style.display = 'none';
                     }
 
