@@ -28,20 +28,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const drowsinessDetector = new DrowsinessDetector();
     // --- FIM DA MUDANÇA ---
 
-async function loadModels() {
-    try {
-        const modelUrl = 'https://jsso0.github.io/face-detection-app/models/';
-        await faceapi.nets.tinyFaceDetector.loadFromUri('https://github.com/JSSO0/face-detection-app/blob/main/models/tiny_face_detector_model-weights_manifest.json');
-        await faceapi.nets.faceLandmark68Net.loadFromUri('https://github.com/JSSO0/face-detection-app/blob/main/models/face_landmark_68_model-weights_manifest.json');
-        // Se você quiser detecção de expressão facial (para bocejos mais avançados)
-        // await faceapi.nets.faceExpressionNet.loadFromUri(modelUrl + 'face_expression_model-weights_manifest.json');
-        isModelLoaded = true;
-        console.log('Modelos de detecção de sonolência carregados com sucesso de:', modelUrl);
-    } catch (error) {
-        console.error('Erro ao carregar modelos para detecção de sonolência:', error);
-        alert('Não foi possível carregar os modelos. Verifique o console e o caminho dos modelos.');
+    async function loadModels() {
+        try {
+            const modelUrl = '/models'; // Caminho para seus modelos locais
+            await faceapi.nets.tinyFaceDetector.loadFromUri(modelUrl);
+            await faceapi.nets.faceLandmark68Net.loadFromUri(modelUrl);
+            // Se você quiser detecção de expressão facial (para bocejos mais avançados)
+            // await faceapi.nets.faceExpressionNet.loadFromUri(modelUrl);
+            isModelLoaded = true;
+            console.log('Modelos de detecção de sonolência carregados com sucesso de:', modelUrl);
+        } catch (error) {
+            console.error('Erro ao carregar modelos para detecção de sonolência:', error);
+            alert('Não foi possível carregar os modelos. Verifique o console e o caminho dos modelos.');
+        }
     }
-}
 
     async function startCamera() {
         try {
