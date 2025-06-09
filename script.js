@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function loadModels() {
         try {
-            const modelUrl = 'https://github.com/JSSO0/face-detection-app/tree/main/models'; // Caminho para seus modelos locais
+            const modelUrl = 'https://github.com/JSSO0/face-detection-app/tree/8925076d3aaeae9d4524c62edb23da9f37d20f86/models'; // Caminho para seus modelos locais
             await faceapi.nets.tinyFaceDetector.loadFromUri(modelUrl);
             await faceapi.nets.faceLandmark68Net.loadFromUri(modelUrl);
             // Se você quiser detecção de expressão facial (para bocejos mais avançados)
