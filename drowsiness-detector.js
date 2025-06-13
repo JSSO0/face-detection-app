@@ -72,16 +72,23 @@ class DrowsinessDetector {
         await this._login();
     }
 
-    async _resetAlarm() {
-        this.isAlarmOn = false;
-        this.alertBox.style.display = 'none';
-        this.alarmAudio.pause();
-        this.alarmAudio.currentTime = 0;
-        const end = new Date().toISOString();
-        const start = this.sleepStart;
-        this.sleepStart = null;
-        await this._sendSleepData(start, end);
-    }
+async _resetAlarm() {
+    this.isAlarmOn = false;
+    this.alertBox.style.display = 'none';
+    this.alarmAudio.pause();
+    this.alarmAudio.currentTime = 0;
+
+    const end = new Date().toISOString();
+    const start = this.sleepStart;
+    this.sleepStart = null;
+
+    await this._sendSleepData(start, end);
+
+    // ✅ Dispara evento personalizado
+    window.dispatchEvent(new CustomEvent('sleep-logged', {
+        detail: { start, end }
+    }));
+}
 
     _setupUI() {
         this.alertBox = document.createElement('div');

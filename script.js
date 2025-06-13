@@ -108,3 +108,16 @@ document.addEventListener('DOMContentLoaded', () => {
         startButton.textContent = 'Câmera Ativada';
     });
 });
+
+// Criar lista de sonecas
+const sleepList = document.createElement('ul');
+sleepList.style = 'position:fixed;bottom:10px;right:10px;max-height:200px;overflow:auto;background:#fff;padding:10px;border:1px solid #ccc;border-radius:5px;font-family:sans-serif;font-size:14px;z-index:9999;';
+document.body.appendChild(sleepList);
+
+// Escuta evento de nova soneca
+window.addEventListener('sleep-logged', e => {
+    const { start, end } = e.detail;
+    const li = document.createElement('li');
+    li.textContent = `😴 Início: ${new Date(start).toLocaleTimeString()} → Fim: ${new Date(end).toLocaleTimeString()}`;
+    sleepList.appendChild(li);
+});
